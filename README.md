@@ -24,14 +24,15 @@ test2.py | Test file
 train.py | Training file
 utils.py | Contains utilies related to 
 ----
+## Running with pretrained model
+- Use the command **CUDA_VISIBLE_DEVICES=0 python3 test2.py --eval-file "pretrained-mode/optimized.pth"**. This will generate the files in the results directory and prints the psnr value
 ## Training 
 - Run optimize.py file using CUDA_VISIBLE_DEVICES=0 python3 optimize.py
-NOTE : The work have been tested on GPU's and may have issues on CPU device.
-
-This will generate the optimized.pth file which can be used further for testing.
+- **NOTE** : The work have been tested on GPU's and may have issues on CPU device.
+- This will generate the optimized.pth file which can be used further for testing.
 
 ## Testing the output
-- Use the command CUDA_VISIBLE_DEVICES=0 python3 test2.py --eval-file "pretrained-mode/optimized.pth". This will generate the files in the results directory and prints the psnr value. If you have generated the new models after using the steps listed in training then you can replace use : CUDA_VISIBLE_DEVICES=0 python3 test2.py --eval-file "optimized.pth"
+-  If you have generated the new models after using the steps listed in training then you can replace use : **CUDA_VISIBLE_DEVICES=0 python3 test2.py --eval-file "optimized.pth"**
 - This also generates the optimized.onnx file which can be directly used to run on xgen.
 
 
