@@ -48,8 +48,10 @@ def maina(model) -> None:
     parser.add_argument('--eval-file', type=str, default="ori.pth")
     args = parser.parse_args()
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-    g_model=torch.load(args.eval_file, map_location=lambda storage, loc: storage).to(device)
-    # g_model= model
+    if model is None:
+        g_model=torch.load(args.eval_file, map_location=lambda storage, loc: storage).to(device)
+     else:
+        g_model= model
     # print(args.eval_file,"is file")
     make_directory(config.sr_dir)
 
