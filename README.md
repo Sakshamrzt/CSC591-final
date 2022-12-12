@@ -56,6 +56,7 @@ utils.py | Contains utilies related to
 - Upscale value -  Set in the config.py file. Default value is 3.
 
 ## References
+The pytorch model along with the training/testing part is heavily inspired from the following links.
 1. [Pytorch Repository](https://github.com/yjn870/ESPCN-pytorch)
 2. [Testing reference](https://github.com/Lornatang/ESPCN-PyTorch)
 
