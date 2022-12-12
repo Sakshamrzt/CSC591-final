@@ -29,7 +29,7 @@ utils.py | Contains utilies related to
 This will generate the optimized.pth file which can be used further for testing.
 
 ## Testing the output
-- Use the command python3 test2.py --eval-file "pretrained-mode/optimized.pth". This will generate the files in the results directory and prints the psnr value. If you have generated the new models after using the steps listed in training then you can replace use : python3 test2.py --eval-file "pretrained-mode/optimized.pth"
+- Use the command python3 test2.py --eval-file "pretrained-mode/optimized.pth". This will generate the files in the results directory and prints the psnr value. If you have generated the new models after using the steps listed in training then you can replace use : python3 test2.py --eval-file "optimized.pth"
 - This also generates the optimized.onnx file which can be directly used to run on xgen.
 
 
