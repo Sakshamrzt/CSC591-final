@@ -31,7 +31,7 @@ utils.py | Contains utilies related to
 
 ## Testing with pretrained model
 - The pretrained-model directory contains the pytorch and onnx files for the original and optimized model.
-- These models are trained for 3x upscaling. For other upscale factor values new models need to trained and used for testing.
+- These models are trained for 3x upscaling. For other upscale factor values new models need to be trained and used for testing.
 - These can be used to directly test the effectiveness of the model.
 -  Use the command **CUDA_VISIBLE_DEVICES=0 python3 test2.py --eval-file "pretrained-mode/optimized.pth"**. This will generate the files in the results directory and prints the psnr value
 
@@ -42,7 +42,7 @@ utils.py | Contains utilies related to
 
 ## Testing the output
 -  If you have generated the new models after using the steps listed in training then you can use : **CUDA_VISIBLE_DEVICES=0 python3 test2.py --eval-file "optimized.pth"**
-- This training alsogenerates the optimized.onnx file which can be directly used to run on xgen and speed can be measured there.
+- This training also generates the optimized.onnx file which can be directly used to run on xgen and speed can be measured there.
 
 ## Testing for different scales
 - The code is currently configured for 3x upscaling
