@@ -11,22 +11,31 @@
 Main scripts lies under src directory.
 File  | Usage
 ------------- | -------------
-config.py | 
-hpo-Evolution.py | 
-hpo-SMAC.py |
-hpo-TPE.py |
-image_quality_assessment.py |
-imgproc.py |
-model.py |
-models.py |
-optimize.py |
-test2.py |
-train.py |
-utils.py |
+config.py | Config file containing the configuration setting for the experiments
+hpo-Evolution.py | Configuration file for evolution HPO tuner
+hpo-SMAC.py | Configuration file for evolution SMAC tuner
+hpo-TPE.py | Configuration file for evolution TPE tuner
+image_quality_assessment.py | Contains image quality operations
+imgproc.py | Image processing utilities
+model.py | Tuner training file
+models.py | File containing the model(ESPCN)
+optimize.py | The main file containing the optimization logi
+test2.py | Test file
+train.py | Training file
+utils.py | Contains utilies related to 
 ----
-## Training Setup
+## Training 
+- Run optimize.py file using python3 optimize.py
+This will generate the optimized.pth file which can be used further for testing.
 
-## Testing Setup
+## Testing the output
+- Use the command python3 test2.py --eval-file "optimized.pth". This will generate the files in the results directory and prints the psnr value.
+- This also generates the optimized.onnx file which can be directly used to run on xgen.
+
+
+## References
+1. [Pytorch Repository](https://github.com/yjn870/ESPCN-pytorch)
+2. [Testing reference](https://github.com/Lornatang/ESPCN-PyTorch)
 
 ## Team
 Name  | Unity id
