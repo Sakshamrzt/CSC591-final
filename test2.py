@@ -50,7 +50,7 @@ def maina(model) -> None:
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     if model is None:
         g_model=torch.load(args.eval_file, map_location=lambda storage, loc: storage).to(device)
-     else:
+    else:
         g_model= model
     # print(args.eval_file,"is file")
     make_directory(config.sr_dir)
