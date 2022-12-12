@@ -9,14 +9,15 @@ import os
 from train import main, device, train_dataloader
 # from eval import evaluate
 # from demo import demo
+import config
 import torch.optim as optim
 from test2 import maina
 import torch.nn.functional as F
 
 # define the model
-perform_quantization = True
-perform_distillation = True
-model = ESPCN(3).to(device)
+perform_quantization = False
+perform_distillation = False
+model = ESPCN(config.upscale_factor).to(device)
 # print(model.keys())
 model_list = nn.ModuleList([])
 # %%
