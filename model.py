@@ -142,7 +142,7 @@ def maina(model) -> None:
 
     # Create a folder of super-resolution experiment results
     parser = argparse.ArgumentParser()
-    parser.add_argument('--eval-file', type=str, default="ori.pth")
+    parser.add_argument('--eval-file', type=str, default="optimized.pth")
     args = parser.parse_args()
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     # g_model=model = torch.load(args.eval_file, map_location=lambda storage, loc: storage).to(device)

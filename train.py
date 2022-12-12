@@ -115,13 +115,19 @@ def main(model,msg):
             dummy_input = torch.randn(1,1, 28, 28).to(device)
             best_weights = copy.deepcopy(model.state_dict())
             torch.save(model,  msg+'.pth')
-            torch.onnx.export(
+            if msg is  "quantization":
+                torch.onnx.export(
                 model,  # model being run
                 dummy_input,  # model inputl
-                "espcn"+msg +".onnx",
-                # ,  # where to save the model
-                do_constant_folding=True,    
-                opset_version=9  # XGen supports 11 or 9
-            )
-
+                "espcn"+msg +".onnx")
+            else:
+                torch.onnx.export(
+                    model,  # model being run
+                    dummy_input,  # model inputl
+                    "espcn"+msg +".onnx",
+                    # ,  # where to save the model
+                    do_constant_folding=True,    
+                    opset_version=9  # XGen supports 11 or 9
+                )
+            
     print('best epoch: {}, psnr: {:.2f}'.format(best_epoch, best_psnr))

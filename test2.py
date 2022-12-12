@@ -66,7 +66,7 @@ def maina(model) -> None:
 
     # Initialize IQA metrics
     psnr_metrics = 0.0
-    ssim_metrics = 0.0
+    # ssim_metrics = 0.0
 
     # Get a list of test image file names.
     file_names = natsorted(os.listdir(config.lr_dir))
@@ -79,6 +79,7 @@ def maina(model) -> None:
         gt_image_path = os.path.join(config.gt_dir, file_names[index])
 
         # print(f"Processing `{os.path.abspath(lr_image_path)}`...")
+        print(gt_image_path)
         gt_y_tensor, gt_cb_image, gt_cr_image = imgproc.preprocess_one_image(gt_image_path, config.device)
         # print("Takes a long time")
         lr_y_tensor, lr_cb_image, lr_cr_image = imgproc.preprocess_one_image(lr_image_path, config.device)
@@ -99,17 +100,16 @@ def maina(model) -> None:
 
         # Cal IQA metrics
         psnr_metrics += psnr(sr_y_tensor, gt_y_tensor).item()
-        ssim_metrics += ssim(sr_y_tensor, gt_y_tensor).item()
+        # ssim_metrics += ssim(sr_y_tensor, gt_y_tensor).item()
 
     # Calculate the average value of the sharpness evaluation index,
     # and all index range values are cut according to the following values
     # PSNR range value is 0~100
     # SSIM range value is 0~1
     avg_psnr = 100 if psnr_metrics / total_files > 100 else psnr_metrics / total_files
-    avg_ssim = 1 if ssim_metrics / total_files > 1 else ssim_metrics / total_files
+    # avg_ssim = 1 if ssim_metrics / total_files > 1 else ssim_metrics / total_files
 
-    print(f"PSNR: {avg_psnr:4.2f} [dB]\n"
-          f"SSIM: {avg_ssim:4.4f} [u]")
+    print(f"PSNR: {avg_psnr:4.2f} [dB]\n")
     return avg_psnr
 
 

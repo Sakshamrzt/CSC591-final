@@ -83,6 +83,6 @@ if mode == "test":
     # Test data address
     lr_dir = f"./data/Set5/LRbicx{upscale_factor}"
     sr_dir = f"./results/test/{exp_name}"
-    gt_dir = "../../../fin_2/ESPCN-pytorch/data/Set5/GTmod12"
+    gt_dir = "./data/Set5/GTmod12"
 
-    model_weights_path = "../../../fin_2/ESPCN-pytorch/best.pth"
+    model_weights_path = "./pretrained-model/optimized.pth"

@@ -14,6 +14,8 @@ from test2 import maina
 import torch.nn.functional as F
 
 # define the model
+perform_quantization = True
+perform_distillation = True
 model = ESPCN(3).to(device)
 # print(model.keys())
 model_list = nn.ModuleList([])
@@ -29,24 +31,12 @@ optimizer = optim.Adam([
 
 
 # pre-train and evaluate the model on MNIST dataset
-main(model,"ori")
+main(model,"original")
 # main(model)
 print("Saving the model")
 
 
-
-# %%
 # Pruning Model
-# -------------
-#
-# Using L1NormPruner to prune the model and generate the masks.
-# Usually, a pruner requires original model and ``config_list`` as its inputs.
-# Detailed about how to write ``config_list`` please refer :doc:`compression config specification <../compression/compression_config_list>`.
-#
-# The following `config_list` means all layers whose type is `Linear` or `Conv2d` will be pruned,
-# except the layer named `fc3`, because `fc3` is `exclude`.
-# The final sparsity ratio for each layer is 50%. The layer named `fc3` will not be pruned.
-
 config_list = [{
     'sparsity_per_layer': 0.9,
     'op_types': [ 'Conv2d']
@@ -98,120 +88,70 @@ print(model)
 
 # train model again
 main(model,"prune")
-# evaluate(model)
-# demo(model,"prune")
-# torch.save(model, "fsrcnn_prune.pt")
 
 
-# dummy_input = torch.randn(1,1,256,256)
-# input_names = ["input"]
-# torch.onnx.export(model, dummy_input,  'model_vdsr_pru.onnx', input_names=input_names)
+if perform_distillation:
+    config_list0 = [ {
+        'quant_types': ['input', 'weight'],
+        'quant_bits': {'input': 8, 'weight': 8},
+        'op_types':['Conv2d', 'Linear']
+    }]
 
-# print("Quantization")
-# config_list0 = [ {
-#     'quant_types': ['input', 'weight'],
-#     'quant_bits': {'input': 8, 'weight': 8},
-#     'op_types':['Conv2d', 'Linear']
-# }]
+    quantizer = LsqQuantizer(model, config_list0, optimizer)
+    main(model,"quantization")
 
-# quantizer = LsqQuantizer(model, config_list0, optimizer)
-# main(model,"quan")
-# evaluate(model)
-# demo(model,"quant")
-# torch.save(model, "vdsr_prune_quant.pt")
-# torch.onnx.export(model, dummy_input,  'model_vdsr_pru_quan.onnx', input_names=input_names)
 
 model_list.append(model)
 maina(model)
-model_1 = torch.load('ori.pth').to(device)
-# In this example, we set the architecture of teacher and student to be the same. It is feasible to set a different teacher architecture.
-# model_1.load_state_dict()
+model_1 = torch.load('original.pth').to(device)
 model_list.append(model_1)
 
 
-# class DistillKL(nn.Module):
-#     """Distilling the Knowledge in a Neural Network"""
-#     def __init__(self, T):
-#         super(DistillKL, self).__init__()
-#         self.T = T
-
-#     def forward(self, y_s, y_t):
-#         p_s = F.log_softmax(y_s/self.T, dim=1)
-#         p_t = F.softmax(y_t/self.T, dim=1)
-#         loss = F.kl_div(p_s, p_t, size_average=False) * (self.T**2) / y_s.shape[0]
-#         return loss
 
 
+if perform_distillation:
+    os.makedirs('./experiment_data', exist_ok=True)
+    best_top1 = -1
 
-# def train_stu( models):
-#     global criterion
-#     model_s = models[0].to(device).train()
-#     model_t = models[-1].to(device).eval()
-#     cri_cls = criterion
-#     cri_kd = DistillKL(40)
+    class DistillKL(nn.Module):
+        """Distilling the Knowledge in a Neural Network"""
+        def __init__(self, T):
+            super(DistillKL, self).__init__()
+            self.T = T
 
+        def forward(self, y_s, y_t):
+            p_s = F.log_softmax(y_s/self.T, dim=1)
+            p_t = F.softmax(y_t/self.T, dim=1)
+            loss = F.kl_div(p_s, p_t, size_average=False) * (self.T**2) / y_s.shape[0]
+            return loss
 
-#     for batch_idx, (data, target) in enumerate(train_dataloader):
-#         data, target = data.to(device), target.to(device)
-#         optimizer.zero_grad()
-#         output_s = model_s(data)
-#         output_t = model_t(data)
+    def train(models):
+        model_s = models[0].train()
+        model_t = models[-1].eval()
+        # cri_kd = DistillKL(4.0)
 
-#         loss_cls = cri_cls(output_s, target)
-#         loss_kd = cri_kd(output_s, output_t)
-#         loss = loss_cls + loss_kd
-#         loss.backward()
-#         optimizer.step()
+        for batch_idx, (data, target) in enumerate(train_dataloader):
+            data, target = data.to(device), target.to(device)
+            optimizer.zero_grad()
+            y_s = model_s(data)
+            y_t = model_t(data)
+            loss_cri = criterion(y_s, target)
 
-os.makedirs('./experiment_data', exist_ok=True)
-best_top1 = -1
+            # kd loss
+            p_s = F.log_softmax(y_s/4.0, dim=1)
+            p_t = F.softmax(y_t/4.0, dim=1)
+            loss_kd = F.kl_div(p_s, p_t, size_average=False) * (4.0**2) / y_s.shape[0]
 
-class DistillKL(nn.Module):
-    """Distilling the Knowledge in a Neural Network"""
-    def __init__(self, T):
-        super(DistillKL, self).__init__()
-        self.T = T
+            # total loss
+            loss = loss_cri + loss_kd
+            loss.backward()
 
-    def forward(self, y_s, y_t):
-        p_s = F.log_softmax(y_s/self.T, dim=1)
-        p_t = F.softmax(y_t/self.T, dim=1)
-        loss = F.kl_div(p_s, p_t, size_average=False) * (self.T**2) / y_s.shape[0]
-        return loss
-
-# def train(models):
-#     model_s = models[0].train()
-#     model_t = models[-1].eval()
-#     # cri_kd = DistillKL(4.0)
-
-#     for batch_idx, (data, target) in enumerate(train_dataloader):
-#         data, target = data.to(device), target.to(device)
-#         optimizer.zero_grad()
-#         y_s = model_s(data)
-#         y_t = model_t(data)
-#         loss_cri = criterion(y_s, target)
-
-#         # kd loss
-#         p_s = F.log_softmax(y_s/4.0, dim=1)
-#         p_t = F.softmax(y_t/4.0, dim=1)
-#         loss_kd = F.kl_div(p_s, p_t, size_average=False) * (4.0**2) / y_s.shape[0]
-
-#         # total loss
-#         loss = loss_cri + loss_kd
-#         loss.backward()
-
-# for epoch in range(160):
-#     print('# Epoch {} #'.format(epoch), flush=True)
-#     train(model_list)
-#     # test student only
-#     top1 = maina( model_list[0])
-#     print(top1,"value")
-#     if top1 > best_top1:
-#         best_top1 = top1
-#         torch.save(model_list[0], 'model_trained_espcn.pth')
-#         print('Model trained saved to current dir with loss %f',top1 , flush=True)
-# test final model
-model.load_state_dict(torch.load('model_trained_espcn.pth'))
-# print(model)
-# evaluator(model)
-dummy_input = torch.randn(1,1, 28, 28).to(device)
-torch.onnx.export(model, dummy_input,  'model_espcn_fin.onnx')
+    for epoch in range(1):
+        print('# Epoch {} #'.format(epoch), flush=True)
+        train(model_list)
+        # test student only
+        top1 = maina( model_list[0])
+        if top1 > best_top1:
+            best_top1 = top1
+            torch.save(model_list[0], 'new_optimized.pth')
+            print('Model trained saved to current dir with loss %f',top1 , flush=True)
