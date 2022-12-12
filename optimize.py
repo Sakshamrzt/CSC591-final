@@ -88,7 +88,7 @@ ModelSpeedup(model, torch.rand(1, 1, 256, 256).to(device), masks).speedup_model(
 print(model)
 
 # train model again
-main(model,"prune")
+main(model,"optimized")
 
 
 if perform_distillation:
