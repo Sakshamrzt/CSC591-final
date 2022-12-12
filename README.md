@@ -34,9 +34,9 @@ utils.py | Contains utilies related to
 - These models are trained for 3x upscaling. For other upscale factor values new models need to trained and used for testing.
 - These can be used to directly test the effectiveness of the model.
 -  Use the command **CUDA_VISIBLE_DEVICES=0 python3 test2.py --eval-file "pretrained-mode/optimized.pth"**. This will generate the files in the results directory and prints the psnr value
--
+
 ## Training
-- Run optimize.py file using CUDA_VISIBLE_DEVICES=0 python3 optimize.py
+- Run optimize.py file using **CUDA_VISIBLE_DEVICES=0 python3 optimize.py**
 - **NOTE** : The work have been tested on GPU's and may have issues on CPU device.
 - This will generate the optimized.pth file which can be used further for testing.
 
