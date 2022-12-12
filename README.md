@@ -41,7 +41,7 @@ utils.py | Contains utilies related to
 
 ## Testing the output
 -  If you have generated the new models after using the steps listed in training then you can replace use : **CUDA_VISIBLE_DEVICES=0 python3 test2.py --eval-file "optimized.pth"**
-- This also generates the optimized.onnx file which can be directly used to run on xgen.
+- This also generates the optimized.onnx file which can be directly used to run on xgen and speed can be measured there.
 
 ## Configuration
 - [Training Dataset](https://www.dropbox.com/s/4mv1v4qfjo17zg3/91-image_x3.h5?dl=0)
