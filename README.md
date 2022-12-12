@@ -48,7 +48,7 @@ utils.py | Contains utilies related to
 - The code is currently configured for 3x upscaling
 - For different value of scaling the following needs to be done.
   - Change the upscale_factor in config.py
-  - Traing the model using 
+  - Traing the model using the corresponding dataset. The repository uses dataset configured for 3 x scaling. You can find the appropriate upscaling dataset [here](https://drive.google.com/drive/folders/1A6lzGeQrFMxPqJehK9s37ce-tPDj20mD).
 
 ## Configuration
 - [Training Dataset](https://www.dropbox.com/s/4mv1v4qfjo17zg3/91-image_x3.h5?dl=0)
