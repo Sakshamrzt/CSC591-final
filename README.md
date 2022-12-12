@@ -24,6 +24,10 @@ test2.py | Test file
 train.py | Training file
 utils.py | Contains utilies related to 
 ----
+
+## Installation
+- Run pip3 install -r requirements.txt 
+
 ## Testing with pretrained model
 - The pretrained-model directory contains the pytorch and onnx files for the original and optimized model.
 - These can be used to directly test the effectiveness of the model.
